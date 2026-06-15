@@ -1,0 +1,8 @@
+streamlit
+requests
+beautifulsoup4
+PyYAML
+pandas
+python-dateutil
+PyMuPDF
+reportlab

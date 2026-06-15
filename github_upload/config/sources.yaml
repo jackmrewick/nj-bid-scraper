@@ -1,0 +1,105 @@
+settings:
+  target_counties: [Bergen, Essex, Hudson, Passaic, Morris, Union, Sussex, Warren]
+  request_delay_seconds: 1.0
+  timeout_seconds: 30
+  max_detail_pages_per_source: 8
+
+sources:
+  - id: clifton_bids
+    name: City of Clifton Bid Postings
+    county: Passaic
+    url: https://www.cliftonnj.org/bids.aspx
+    source_type: municipality
+    scraper_type: civicengage
+    active: true
+  - id: passaic_city_bids
+    name: City of Passaic Bid Postings
+    county: Passaic
+    url: https://www.cityofpassaic.com/bids.aspx
+    source_type: municipality
+    scraper_type: civicengage
+    active: true
+  - id: summit_bids
+    name: City of Summit Bid Postings
+    county: Union
+    url: https://www.cityofsummit.org/Bids.aspx
+    source_type: municipality
+    scraper_type: civicengage
+    active: true
+  - id: westfield_bids
+    name: Town of Westfield Bid Postings
+    county: Union
+    url: https://www.westfieldnj.gov/Bids.aspx
+    source_type: municipality
+    scraper_type: civicengage
+    active: true
+  - id: newark_bids
+    name: City of Newark Current Bids/RFPs/RFQs
+    county: Essex
+    url: https://www.newarknj.gov/384/Current-Bids-RFPs-RFQs
+    source_type: city
+    scraper_type: generic_html
+    active: true
+  - id: jersey_city_purchasing
+    name: Jersey City Purchasing
+    county: Hudson
+    url: https://www.jerseycitynj.gov/cityhall/finance/purchasing
+    source_type: city
+    scraper_type: generic_html
+    active: true
+  - id: jersey_city_bid_openings
+    name: Jersey City Bid Openings
+    county: Hudson
+    url: https://www.jerseycitynj.gov/cityhall/finance/purchasing/publiccontracts/bid_openings
+    source_type: city
+    scraper_type: generic_html
+    active: true
+  - id: paterson_purchasing
+    name: City of Paterson Purchasing
+    county: Passaic
+    url: https://www.patersonnj.gov/purchasing/
+    source_type: city
+    scraper_type: generic_html
+    active: true
+  - id: bergen_bids
+    name: Bergen County BergenBids
+    county: Bergen
+    url: https://bergenbids.com/
+    source_type: county
+    scraper_type: generic_html
+    active: true
+  - id: essex_county_procure
+    name: Essex County Purchasing Portal
+    county: Essex
+    url: https://www.essexcountynjprocure.org/
+    source_type: county
+    scraper_type: generic_html
+    active: true
+  - id: hudson_county_purchasing
+    name: Hudson County Purchasing
+    county: Hudson
+    url: https://www.hcnj.us/finance/purchasing/
+    source_type: county
+    scraper_type: generic_html
+    active: true
+  - id: passaic_county_bids
+    name: Passaic County Bid Portal
+    county: Passaic
+    url: https://www.passaicbids.com/
+    source_type: county
+    scraper_type: generic_html
+    active: true
+  - id: nj_dpmc_ads
+    name: NJ DPMC Contractor Project Advertisements
+    county: Statewide
+    url: https://www.nj.gov/treasury/dpmc/project_construction_advertisements.shtml
+    source_type: state
+    scraper_type: generic_html
+    active: true
+  - id: njdot_current_projects
+    name: NJDOT Current Advertised Projects
+    county: Statewide
+    url: https://www.nj.gov/transportation/business/procurement/ConstrServ/curradvproj.shtm
+    source_type: state
+    scraper_type: generic_html
+    active: true
