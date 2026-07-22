@@ -20,126 +20,176 @@ except Exception:
 USER_AGENT = "NJPublicBidScraper-NoAI/1.0 contact=your-email@example.com"
 
 BID_WORDS = [
-    "bid", "bids", "bidder", "bidders", "notice to bidders", "sealed bids", "rfp", "rfq",
-    "proposal", "proposals", "solicitation", "procurement", "contract", "public works",
-    "advertisement", "addendum", "addenda", "award", "purchasing"
+    # Core public-bid language.
+    "bid", "bids", "bidder", "bidders", "bidding", "bid package", "bid packet",
+    "bid documents", "bid doc", "bid opening", "bid due", "bid deadline", "bid date",
+    "notice to bidders", "notice inviting bids", "invitation to bid", "invitation for bids",
+    "ifb", "sealed bid", "sealed bids", "sealed proposal", "sealed proposals",
+    "public bid", "public bidding", "public works bid", "competitive contracting",
+
+    # RFP/RFQ/procurement terms that still commonly contain construction opportunities.
+    "rfp", "request for proposal", "request for proposals", "rfq", "request for qualifications",
+    "quote", "quotes", "quotation", "proposal", "proposals", "submittal", "submission",
+    "solicitation", "opportunity", "procurement", "purchasing", "contract", "contracts",
+    "contractor", "contractors", "prime contractor", "general contractor", "public works",
+    "prevailing wage", "certified payroll", "bid bond", "performance bond", "payment bond",
+    "maintenance bond", "surety", "addendum", "addenda", "specification", "specifications",
+    "specs", "plans", "drawings", "project manual", "construction documents", "scope of work",
+    "bid form", "proposal form", "legal advertisement", "advertisement", "vendor", "planholder",
 ]
 
+# These are no longer general trade categories. They are discovery words that help the
+# scraper keep construction-looking listings long enough to classify them by your target trades.
+# Arbitrary trades such as roadwork, milling, HVAC, electrical, and plumbing were intentionally removed.
 CONSTRUCTION_WORDS = [
-    "construction", "improvement", "improvements", "renovation", "alteration", "public works",
-    "contractor", "prevailing wage", "performance bond", "payment bond", "bid bond", "dpmc",
-    "road", "roadway", "resurfacing", "milling", "paving", "asphalt", "sidewalk", "curb",
-    "drainage", "stormwater", "sewer", "water main", "utility", "roof", "roofing", "hvac",
-    "boiler", "chiller", "electrical", "lighting", "generator", "plumbing", "fire alarm",
-    "sprinkler", "masonry", "concrete", "demolition", "abatement", "flooring", "window",
-    "door", "fence", "fencing", "park", "playground", "athletic field", "turf", "building",
-    "facility", "pump station",
-
-    # User-requested specialized/high-margin trade terms.
-    "masonry restoration", "brick restoration", "stone restoration", "repointing", "pointing",
-    "tuckpointing", "waterproofing", "seal coating", "sealcoating", "facade alteration",
-    "facade restoration", "facade repair", "cold applied membrane", "cold-applied membrane",
-    "liquid applied membrane", "fluid applied membrane", "roof restoration", "roof coating",
-    "silicone roof restoration", "silicone roof coating", "structural reinforcement",
-    "structural alteration", "structural alterations", "structural repair",
-
-    # User-requested secondary/winter-fill trade terms.
-    "acoustic ceilings", "acoustical ceilings", "dropped ceilings", "drop ceiling",
-    "suspended ceiling", "ceiling tile", "interior alterations", "interior alteration",
+    "construction", "renovation", "renovations", "alteration", "alterations", "improvement",
+    "improvements", "rehabilitation", "restoration", "repair", "repairs", "replacement",
+    "building", "facility", "public works", "contractor", "construction services",
+    "construction project", "capital improvement", "capital project", "dpmc", "division 1",
+    "division 3", "division 4", "division 7", "general construction", "sitework", "site work",
+    "concrete", "roof", "roofing", "addition", "building addition", "masonry", "waterproof",
+    "waterproofing", "structural", "interior", "exterior", "facade", "façade",
 ]
 
-NEGATIVE_WORDS = ["canceled", "cancelled", "closed", "expired", "archive", "awarded", "not accepting", "no longer accepting"]
+# Terms that indicate useful paperwork or important bid-supporting information.
+DOCUMENT_WORDS = [
+    "plans", "drawings", "specifications", "specification", "specs", "project manual",
+    "bid documents", "bid package", "bid packet", "contract documents", "construction documents",
+    "proposal form", "bid form", "form of bid", "addendum", "addenda", "plan holder",
+    "planholder", "document", "documents", "download", "attachment", "attachments",
+    "forms", "legal notice", "notice to bidders", "scope of work", "instructions to bidders",
+]
 
+# Expanded negative language. These listings are usually closed, stale, irrelevant, or already decided.
+NEGATIVE_WORDS = [
+    "canceled", "cancelled", "cancellation", "closed", "expired", "archive", "archived",
+    "awarded", "award pending", "recommendation of award", "intent to award", "bid results",
+    "results", "tabulation", "bid tab", "bid tabs", "no longer accepting", "not accepting",
+    "submission period closed", "deadline has passed", "has been awarded", "postponed indefinitely",
+    "withdrawn", "rejected", "all bids rejected", "rebid pending", "cancelled solicitation",
+    "closed bids", "past bids", "past opportunities", "inactive", "not available", "for information only",
+]
+
+# Positive status phrases help identify opportunities that are still live.
+OPEN_WORDS = [
+    "open", "currently open", "active", "accepting bids", "accepting proposals", "now accepting",
+    "available", "current bid", "current bids", "current opportunity", "currently advertised",
+    "advertised", "out to bid", "open for bidding", "bids wanted", "proposals wanted",
+]
+
+# Targeted trade list only. Removed arbitrary categories such as roadwork, milling, HVAC,
+# electrical, plumbing, parks, landscape, and other non-priority trades.
 TRADE_KEYWORDS = {
-    # Primary specialized/high-margin trades. These are intentionally listed first so
-    # they win tie-breakers against broader categories such as Roofing or General Construction.
-    "Masonry Restoration": [
-        "masonry restoration", "brick restoration", "stone restoration", "terra cotta restoration",
-        "repointing", "pointing", "tuckpointing", "mortar repair", "brick repair",
-        "stone repair", "lintel replacement", "lintel repair", "parapet repair",
+    "Tuck Pointing": [
+        "tuck pointing", "tuck-pointing", "tuckpointing", "repointing", "re-pointing",
+        "pointing", "brick pointing", "masonry pointing", "stone pointing", "joint repointing",
+        "mortar joint", "mortar joints", "mortar repair", "mortar repairs", "mortar replacement",
+        "mortar restoration", "rake and repoint", "raking and repointing", "grind and point",
+        "grinding and pointing", "remove and repoint", "repoint brick", "repoint masonry",
+    ],
+    "Masonry": [
+        "masonry", "masonry restoration", "masonry repair", "masonry repairs", "masonry rehabilitation",
+        "masonry preservation", "brick", "brickwork", "brick restoration", "brick repair", "brick repairs",
+        "brick replacement", "brick reconstruction", "stone", "stonework", "stone restoration",
+        "stone repair", "stone repairs", "terra cotta", "terra-cotta", "terracotta", "terra cotta repair",
+        "terra cotta restoration", "block", "cmu", "concrete masonry", "masonry wall", "brick wall",
+        "stone wall", "parapet", "parapet repair", "parapet reconstruction", "chimney repair",
+        "lintel", "lintel repair", "lintel replacement", "sill replacement", "coping stone",
+        "through-wall flashing", "masonry cleaning", "masonry stabilization",
     ],
     "Waterproofing": [
-        "waterproofing", "water proofing", "below grade waterproofing", "foundation waterproofing",
-        "dampproofing", "damp proofing", "joint sealant", "sealants", "caulking",
-        "traffic coating", "deck coating", "plaza deck", "expansion joint",
-    ],
-    "Seal Coating": [
-        "seal coating", "sealcoating", "seal coat", "sealcoat", "asphalt sealing",
-        "pavement sealing", "pavement seal", "crack sealing", "crack seal",
-    ],
-    "Facade Alteration": [
-        "facade alteration", "facade alterations", "facade restoration", "facade repair",
-        "facade improvements", "exterior wall restoration", "exterior facade", "building facade",
-        "curtain wall", "exterior envelope", "building envelope",
-    ],
-    "Cold Applied Membranes": [
-        "cold applied membrane", "cold-applied membrane", "cold fluid applied membrane",
-        "liquid applied membrane", "fluid applied membrane", "cold applied waterproofing",
-        "liquid waterproofing membrane", "fluid-applied waterproofing",
+        "waterproof", "waterproofing", "water proof", "water proofing", "below grade waterproofing",
+        "below-grade waterproofing", "foundation waterproofing", "foundation wall waterproofing",
+        "dampproofing", "damp proofing", "damp-proofing", "water infiltration", "leak repair",
+        "leak repairs", "injection waterproofing", "crack injection", "epoxy injection", "polyurethane injection",
+        "urethane injection", "negative side waterproofing", "positive side waterproofing", "blindside waterproofing",
+        "waterproofing membrane", "fluid applied waterproofing", "liquid applied waterproofing",
+        "elastomeric waterproofing", "traffic coating", "deck coating", "plaza deck", "joint sealant",
+        "joint sealants", "sealant replacement", "sealants", "caulking", "backer rod", "expansion joint",
+        "building envelope waterproofing", "air barrier", "vapor barrier", "weather barrier",
     ],
     "Roof Restoration": [
-        "roof restoration", "roof coating", "roof coatings", "roof repairs", "roof repair",
-        "roof rehabilitation", "roof maintenance", "recover roof", "roof recover",
-    ],
-    "Silicone Roof Restoration": [
-        "silicone roof restoration", "silicone roof coating", "silicone coating",
-        "silicone roof", "fluid applied silicone", "fluid-applied silicone",
-        "silicone membrane", "silicone restoration",
+        "roof restoration", "roof coating", "roof coatings", "roof coating system", "silicone roof coating",
+        "silicone roof restoration", "silicone coating", "silicone membrane", "fluid applied roof",
+        "fluid-applied roof", "liquid applied roof", "liquid-applied roof", "elastomeric roof coating",
+        "reflective roof coating", "roof recover", "recover roof", "roof rehabilitation", "roof repair",
+        "roof repairs", "roof maintenance", "roof membrane restoration", "membrane restoration",
+        "roof restoration system", "epdm restoration", "tpo restoration", "modified bitumen restoration",
+        "flashing repair", "flashing replacement", "roof patching", "roof resealing",
     ],
     "Structural Reinforcement": [
-        "structural reinforcement", "structural strengthening", "carbon fiber reinforcement",
-        "frp reinforcement", "fiber reinforced polymer", "steel reinforcement", "beam reinforcement",
-        "column reinforcement", "slab reinforcement", "structural steel reinforcement",
+        "structural reinforcement", "structural reinforcing", "structural strengthening", "strengthening",
+        "frp", "frp reinforcement", "fiber reinforced polymer", "fibre reinforced polymer", "carbon fiber",
+        "carbon fibre", "carbon fiber reinforcement", "cfrp", "glass fiber reinforcement", "gfrp",
+        "steel reinforcement", "steel reinforcing", "beam reinforcement", "beam strengthening",
+        "column reinforcement", "column strengthening", "slab reinforcement", "slab strengthening",
+        "wall reinforcement", "wall strengthening", "structural steel reinforcement", "sistering",
+        "supplemental steel", "supplemental framing", "anchor reinforcement", "tie back", "tie-back",
+        "helical pier", "helical pile", "structural stabilization", "stabilization work",
     ],
     "Structural Alterations": [
-        "structural alteration", "structural alterations", "structural modification",
-        "structural modifications", "structural repair", "structural repairs", "bearing wall",
-        "load bearing", "beam replacement", "column replacement", "shoring", "underpinning",
+        "structural alteration", "structural alterations", "structural modification", "structural modifications",
+        "structural repair", "structural repairs", "structural remediation", "structural renovation",
+        "load bearing", "load-bearing", "bearing wall", "bearing walls", "remove bearing wall",
+        "new opening", "new openings", "wall opening", "masonry opening", "beam replacement",
+        "column replacement", "beam installation", "new beam", "new lintel", "steel lintel",
+        "shoring", "temporary shoring", "underpinning", "foundation underpinning", "foundation alteration",
+        "foundation repair", "structural steel", "miscellaneous steel", "steel framing", "framing alteration",
+        "floor opening", "roof opening", "structural demolition", "selective structural demolition",
     ],
-
-    # Secondary lower/average margin trades.
-    "Acoustic/Dropped Ceilings": [
-        "acoustic ceiling", "acoustic ceilings", "acoustical ceiling", "acoustical ceilings",
-        "dropped ceiling", "dropped ceilings", "drop ceiling", "drop ceilings",
-        "suspended ceiling", "suspended ceilings", "ceiling tile", "ceiling tiles",
-        "acoustical tile", "act ceiling", "act ceilings",
+    "Interior Renovations": [
+        "interior renovation", "interior renovations", "renovate interior", "renovation of interior",
+        "building renovation", "facility renovation", "office renovation", "classroom renovation",
+        "corridor renovation", "lobby renovation", "bathroom renovation", "toilet room renovation",
+        "tenant improvement", "tenant improvements", "tenant fit out", "tenant fit-out", "fit out", "fit-out",
+        "build out", "build-out", "interior fit out", "interior fit-out", "interior construction",
+        "interior finishes", "finish renovation", "drywall", "gypsum board", "partition", "partitions",
+        "doors frames hardware", "flooring replacement", "ceiling replacement", "paint and finishes",
     ],
     "Interior Alterations": [
-        "interior alteration", "interior alterations", "interior renovation", "interior renovations",
-        "interior construction", "fit out", "fit-out", "tenant fit out", "tenant fit-out",
-        "partition", "partitions", "drywall", "gypsum board", "interior finishes",
+        "interior alteration", "interior alterations", "alter interior", "alterations to interior",
+        "space reconfiguration", "reconfigure space", "interior reconfiguration", "room reconfiguration",
+        "partition alterations", "partition work", "new partitions", "wall relocation", "selective demolition",
+        "interior demolition", "demolition and renovation", "interior improvements", "office alterations",
+        "classroom alterations", "building alterations", "facility alterations", "minor alterations",
+        "general alterations", "renovations and alterations",
     ],
-
-    # Existing broader categories retained for normal public bid discovery.
-    "Paving/Roadwork": ["paving", "milling", "resurfacing", "road", "roadway", "asphalt", "curb", "sidewalk", "traffic signal", "street"],
-    "Sitework/Utilities": ["site work", "sitework", "grading", "excavation", "stormwater", "drainage", "sewer", "sanitary", "water main", "utility", "pump station"],
-    "Roofing": ["roof", "roofing", "membrane", "shingle", "flashing"],
-    "HVAC/Mechanical": ["hvac", "boiler", "chiller", "air handling", "ahu", "rtu", "ventilation", "heating", "cooling", "mechanical"],
-    "Electrical/Lighting": ["electrical", "lighting", "generator", "fire alarm", "switchgear", "panelboard", "conduit", "cctv", "security system"],
-    "Plumbing/Fire Protection": ["plumbing", "water heater", "domestic water", "sprinkler", "fire protection", "backflow"],
-    "Concrete/Masonry": ["concrete", "masonry", "brick", "block", "foundation", "retaining wall"],
-    "Demolition/Abatement": ["demolition", "abatement", "asbestos", "lead paint", "hazardous material"],
-    "Building/General Construction": ["building", "construction", "renovation", "alteration", "facility", "interior", "exterior", "improvements"],
-    "Parks/Athletic/Landscape": ["park", "playground", "athletic field", "turf", "landscaping", "irrigation", "fencing", "field lighting"],
+    "Building/General Construction": [
+        "building construction", "general construction", "building improvements", "facility improvements",
+        "capital improvements", "construction services", "sitework", "site work", "site improvements",
+        "excavation", "grading", "earthwork", "foundation", "foundations", "concrete", "concrete work",
+        "concrete repair", "concrete repairs", "concrete restoration", "slab", "slabs", "sidewalk concrete",
+        "cast-in-place concrete", "roofing", "roof replacement", "roofing replacement", "new roof",
+        "roof membrane", "roof system", "addition", "building addition", "new addition", "addition and renovation",
+        "addition and alterations", "building expansion", "facility addition", "building envelope", "exterior envelope",
+    ],
 }
 
 HIGH_MARGIN_TRADES = {
-    "Masonry Restoration", "Waterproofing", "Seal Coating", "Facade Alteration",
-    "Cold Applied Membranes", "Roof Restoration", "Silicone Roof Restoration",
+    "Masonry", "Waterproofing", "Tuck Pointing", "Roof Restoration",
     "Structural Reinforcement", "Structural Alterations",
 }
 
-SECONDARY_TRADES = {
-    "Acoustic/Dropped Ceilings", "Interior Alterations",
+INTERIOR_TRADES = {"Interior Renovations", "Interior Alterations"}
+
+BROAD_TARGET_TRADES = {"Building/General Construction"}
+
+TARGET_TRADES = HIGH_MARGIN_TRADES | INTERIOR_TRADES | BROAD_TARGET_TRADES
+
+TRADE_PRIORITY_BOOSTS = {
+    "Primary - Priority Trade": 38,
+    "Secondary - Interior Trade": 26,
+    "Broad - General Construction": 15,
+    "Unclassified": 0,
 }
 
 def trade_priority(trade: Optional[str]) -> str:
     if trade in HIGH_MARGIN_TRADES:
-        return "Primary - High Margin"
-    if trade in SECONDARY_TRADES:
-        return "Secondary - Winter Fill"
-    if trade:
-        return "Standard"
+        return "Primary - Priority Trade"
+    if trade in INTERIOR_TRADES:
+        return "Secondary - Interior Trade"
+    if trade in BROAD_TARGET_TRADES:
+        return "Broad - General Construction"
     return "Unclassified"
 
 DATE_PATTERNS = [
@@ -234,7 +284,7 @@ def extract_links(soup: BeautifulSoup, base_url: str) -> List[Tuple[str, str]]:
 
 def link_useful(text: str, url: str) -> bool:
     c = f"{text} {url}".lower()
-    return any(w.lower() in c for w in BID_WORDS + CONSTRUCTION_WORDS + [".pdf", "download", "document", "plan", "spec", "addendum", "detail"])
+    return any(w.lower() in c for w in BID_WORDS + CONSTRUCTION_WORDS + DOCUMENT_WORDS + [".pdf", ".doc", ".docx", "download", "detail"])
 
 def blocks(soup: BeautifulSoup) -> List[Tuple[str, Optional[str], List[str]]]:
     rows = []
@@ -337,16 +387,27 @@ def infer_county(text: str, source_county: str, targets: List[str]) -> Optional[
 def infer_trade(text: str) -> Tuple[Optional[str], int]:
     lower = text.lower(); scored = []
     for trade, words in TRADE_KEYWORDS.items():
-        score = sum(2 if " " in w and w.lower() in lower else 1 for w in words if w.lower() in lower)
-        if score: scored.append((trade, score))
+        score = 0
+        for w in words:
+            wl = w.lower()
+            if wl in lower:
+                # Multi-word trade phrases are stronger than single generic words.
+                score += 4 if " " in wl or "-" in wl else 1
+        if score:
+            # Specialized trades win over broad general-construction matches when scores are close.
+            priority = trade_priority(trade)
+            if priority == "Primary - Priority Trade": score += 10
+            elif priority == "Secondary - Interior Trade": score += 6
+            elif priority == "Broad - General Construction": score += 2
+            scored.append((trade, score))
     return max(scored, key=lambda x: x[1]) if scored else (None, 0)
 
 def infer_status(text: str) -> Optional[str]:
     lower = text.lower()
-    if "canceled" in lower or "cancelled" in lower: return "Canceled"
-    if "closed" in lower or "expired" in lower or "no longer accepting" in lower: return "Closed"
-    if "awarded" in lower: return "Awarded"
-    if any(w in lower for w in ["open", "current", "active", "accepting"]): return "Open"
+    if any(w in lower for w in ["canceled", "cancelled", "cancellation", "withdrawn"]): return "Canceled"
+    if any(w in lower for w in ["awarded", "recommendation of award", "intent to award", "has been awarded"]): return "Awarded"
+    if any(w in lower for w in ["closed", "expired", "no longer accepting", "submission period closed", "deadline has passed", "past bids", "past opportunities"]): return "Closed"
+    if any(w in lower for w in OPEN_WORDS): return "Open"
     return None
 
 def contact_info(text: str) -> str:
@@ -354,11 +415,23 @@ def contact_info(text: str) -> str:
     return "; ".join(found[:5])
 
 def construction_relevance(text: str) -> int:
-    score = min(25, count_matches(text, BID_WORDS)*4) + min(45, count_matches(text, CONSTRUCTION_WORDS)*5)
+    """Scores whether the text is a real bid/construction opportunity in your target universe."""
     lower = text.lower()
-    if "notice to bidders" in lower: score += 15
-    if "prevailing wage" in lower: score += 8
-    if "bid bond" in lower or "performance bond" in lower: score += 8
+    bid_hits = count_matches(text, BID_WORDS)
+    doc_hits = count_matches(text, DOCUMENT_WORDS)
+    trade_hits = sum(count_matches(text, words) for words in TRADE_KEYWORDS.values())
+    general_hits = count_matches(text, CONSTRUCTION_WORDS)
+
+    score = 0
+    score += min(25, bid_hits * 3)
+    score += min(35, trade_hits * 3)
+    score += min(20, general_hits * 2)
+    score += min(12, doc_hits * 2)
+
+    if "notice to bidders" in lower or "invitation to bid" in lower: score += 8
+    if "prevailing wage" in lower or "certified payroll" in lower: score += 4
+    if "bid bond" in lower or "performance bond" in lower or "payment bond" in lower: score += 4
+
     return max(0, min(100, score))
 
 def date_future(iso: Optional[str]) -> Optional[bool]:
@@ -371,38 +444,131 @@ def days_until(iso: Optional[str]) -> Optional[int]:
     try: return (date_parser.parse(iso).date() - dt.date.today()).days
     except Exception: return None
 
+def document_quality(text: str, docs: List[str]) -> Tuple[int, List[str]]:
+    """Rewards real paperwork: plans, specs, addenda, bid forms, downloads, PDFs, etc."""
+    lower = text.lower()
+    reasons = []
+    score = 0
+
+    doc_word_hits = count_matches(text, DOCUMENT_WORDS)
+    if doc_word_hits:
+        pts = min(8, doc_word_hits * 2)
+        score += pts; reasons.append(f"+{pts} bid-document language found")
+
+    if docs:
+        pts = min(10, len(docs) * 2)
+        score += pts; reasons.append(f"+{pts} linked documents/detail pages found")
+
+    pdf_count = sum(1 for d in docs if d.lower().endswith(".pdf"))
+    if pdf_count:
+        pts = min(6, pdf_count * 2)
+        score += pts; reasons.append(f"+{pts} PDF/document links found")
+
+    if any(w in lower for w in ["plans", "drawings", "specifications", "specs", "project manual"]):
+        score += 5; reasons.append("+5 plans/specifications/project manual mentioned")
+
+    if any(w in lower for w in ["addendum", "addenda"]):
+        score += 2; reasons.append("+2 addenda/addendum language found")
+
+    return min(25, score), reasons
+
+def information_completeness(title: str, county: Optional[str], due_iso: Optional[str], contact: str, docs: List[str], detail_url: str, prebid_iso: Optional[str]) -> Tuple[int, List[str]]:
+    """Rewards listings that contain enough information to act on without extra searching."""
+    score = 0; reasons = []
+    if title and len(title.strip()) >= 10: score += 4; reasons.append("+4 usable title")
+    if county: score += 4; reasons.append("+4 county identified")
+    if due_iso: score += 8; reasons.append("+8 due date found")
+    if contact: score += 8; reasons.append("+8 contact info found")
+    if docs: score += 6; reasons.append("+6 paperwork/detail links available")
+    if detail_url: score += 3; reasons.append("+3 source/detail URL available")
+    if prebid_iso: score += 2; reasons.append("+2 pre-bid/site visit date found")
+    return min(25, score), reasons
+
 def score_candidate(c: Candidate, county: Optional[str], trade: Optional[str], trade_strength: int, status: Optional[str], due_iso: Optional[str], prebid_iso: Optional[str], contact: str, docs: List[str], targets: List[str], relevance: int) -> Tuple[int,str,List[str]]:
+    """
+    100-point score focused on your chosen trades.
+    Highest-ranked bids should be open, target-trade matches with due dates, contacts, links, and paperwork.
+    """
     score, reasons = 0, []
-    if county and county.lower() in [x.lower() for x in targets]: score += 25; reasons.append(f"+25 target county: {county}")
-    elif c.source_county.lower() == "statewide": score += 5; reasons.append("+5 statewide source")
-    else: score -= 10; reasons.append("-10 county not clearly targeted")
-    if relevance >= 60: score += 25; reasons.append("+25 strong construction/bid language")
-    elif relevance >= 35: score += 15; reasons.append("+15 moderate construction/bid language")
-    elif relevance >= 15: score += 5; reasons.append("+5 weak construction/bid language")
-    else: score -= 25; reasons.append("-25 weak construction relevance")
-    if trade: pts = min(18, 8 + trade_strength*2); score += pts; reasons.append(f"+{pts} recognizable trade: {trade}")
-    else: score -= 5; reasons.append("-5 no clear trade category")
-    priority = trade_priority(trade)
-    if priority == "Primary - High Margin":
-        score += 25; reasons.append("+25 primary high-margin trade match")
-    elif priority == "Secondary - Winter Fill":
-        score += 8; reasons.append("+8 secondary/winter-fill trade match")
+    lower_targets = [x.lower() for x in targets]
+    raw_lower = c.raw_text.lower()
+
+    # 1) Status / deadline: open opportunities matter most.
     future, days = date_future(due_iso), days_until(due_iso)
+    if status == "Open": score += 18; reasons.append("+18 status appears open")
+    elif status in {"Closed", "Canceled", "Awarded"}: score -= 45; reasons.append(f"-45 status is {status}")
+
     if future is True:
-        if days is not None and 0 <= days <= 45: score += 18; reasons.append(f"+18 open due date: {days} days away")
-        else: score += 10; reasons.append("+10 future due date")
-    elif future is False: score -= 30; reasons.append("-30 expired due date")
-    else: score -= 12; reasons.append("-12 no due date found")
-    if status in {"Closed","Canceled","Awarded"}: score -= 30; reasons.append(f"-30 status is {status}")
-    elif status == "Open": score += 8; reasons.append("+8 status appears open")
+        if days is not None and 3 <= days <= 45:
+            score += 22; reasons.append(f"+22 due date is open and actionable: {days} days away")
+        elif days is not None and 0 <= days < 3:
+            score += 8; reasons.append(f"+8 due date is open but urgent: {days} days away")
+        else:
+            score += 14; reasons.append("+14 future due date")
+    elif future is False:
+        score -= 50; reasons.append("-50 expired due date")
+    else:
+        score -= 25; reasons.append("-25 no due date found")
+
+    # 2) Trade targeting: most important positive category.
+    priority = trade_priority(trade)
+    if trade:
+        strength_pts = min(16, max(4, trade_strength))
+        score += strength_pts; reasons.append(f"+{strength_pts} trade keyword strength: {trade}")
+    else:
+        score -= 18; reasons.append("-18 no target trade detected")
+
+    boost = TRADE_PRIORITY_BOOSTS.get(priority, 0)
+    if boost:
+        score += boost; reasons.append(f"+{boost} {priority}: {trade}")
+    else:
+        score -= 20; reasons.append("-20 not one of the prioritized trades")
+
+    # 3) County / geography.
+    if county and county.lower() in lower_targets:
+        score += 12; reasons.append(f"+12 target county: {county}")
+    elif c.source_county.lower() == "statewide":
+        score += 4; reasons.append("+4 statewide source")
+    else:
+        score -= 8; reasons.append("-8 county not clearly targeted")
+
+    # 4) Bid/construction relevance.
+    if relevance >= 75: score += 14; reasons.append("+14 very strong bid/construction relevance")
+    elif relevance >= 55: score += 10; reasons.append("+10 strong bid/construction relevance")
+    elif relevance >= 35: score += 5; reasons.append("+5 moderate bid/construction relevance")
+    else: score -= 15; reasons.append("-15 weak bid/construction relevance")
+
+    # 5) Information completeness and paperwork.
+    info_pts, info_reasons = information_completeness(c.title, county, due_iso, contact, docs, c.detail_url, prebid_iso)
+    score += info_pts; reasons.extend(info_reasons)
+
+    doc_pts, doc_reasons = document_quality(c.raw_text, docs)
+    score += doc_pts; reasons.extend(doc_reasons)
+
+    # 6) Pre-bid / site visit timing.
     pf = date_future(prebid_iso)
-    if prebid_iso and pf is True: score += 5; reasons.append("+5 future pre-bid/site visit")
-    elif prebid_iso and pf is False: score -= 5; reasons.append("-5 pre-bid/site visit passed")
-    if docs: pts = min(8, len(docs)*2); score += pts; reasons.append(f"+{pts} useful links found")
-    if contact: score += 5; reasons.append("+5 contact info found")
-    if contains_any(c.raw_text, NEGATIVE_WORDS): score -= 8; reasons.append("-8 closed/archive/cancel language")
+    if prebid_iso and pf is True:
+        score += 4; reasons.append("+4 future pre-bid/site visit")
+    elif prebid_iso and pf is False:
+        score -= 8; reasons.append("-8 pre-bid/site visit already passed")
+
+    # 7) Negative/stale/result language.
+    if contains_any(c.raw_text, NEGATIVE_WORDS):
+        score -= 25; reasons.append("-25 closed/archive/award/cancel/result language found")
+
+    # 8) Guardrail: do not let non-target trades look hot just because they have documents.
+    if priority == "Unclassified" and score > 54:
+        reasons.append("Score capped at 54 because no prioritized trade was detected")
+        score = 54
+    if future is False and score > 39:
+        reasons.append("Score capped at 39 because due date is expired")
+        score = 39
+    if status in {"Closed", "Canceled", "Awarded"} and score > 39:
+        reasons.append(f"Score capped at 39 because status is {status}")
+        score = 39
+
     score = max(0, min(100, score))
-    band = "HOT" if score >= 80 else "REVIEW" if score >= 55 else "LOW" if score >= 30 else "ARCHIVE"
+    band = "HOT" if score >= 82 else "REVIEW" if score >= 62 else "LOW" if score >= 35 else "ARCHIVE"
     return score, band, reasons
 
 def dedupe_key(title: str, source: str, due: Optional[str], county: Optional[str]) -> str:
