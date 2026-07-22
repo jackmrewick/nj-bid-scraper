@@ -262,6 +262,13 @@ def safe_str(value) -> str:
     return str(value)
 
 
+def safe_text_column(df: pd.DataFrame, column_name: str) -> pd.Series:
+    """Return a text Series even when a CSV column is missing."""
+    if column_name in df.columns:
+        return df[column_name].fillna("").astype(str)
+    return pd.Series([""] * len(df), index=df.index, dtype="object")
+
+
 def combined_text_for_row(row: pd.Series) -> str:
     parts = []
     for col in [
@@ -358,11 +365,11 @@ def prepare_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     df["has_contact"] = df["contact_info"].fillna("").astype(str).str.len() > 0
     df["has_website_link"] = df["detail_url"].fillna("").astype(str).str.startswith("http")
 
-    document_text = (
-        df.get("linked_documents", "").fillna("").astype(str)
-        + " "
-        + df.get("linked_documents_json", "").fillna("").astype(str)
-    )
+    # Some scraper CSV exports include the friendly "linked_documents" column,
+    # while older/database-derived exports may include "linked_documents_json".
+    # df.get("missing_column", "") returns a plain string, not a Series, so use
+    # safe_text_column() to prevent AttributeError when either column is absent.
+    document_text = safe_text_column(df, "linked_documents") + " " + safe_text_column(df, "linked_documents_json")
     df["has_documents"] = document_text.str.len() > 4
 
     status_lower = df["status"].fillna("").astype(str).str.lower()
