@@ -1,0 +1,369 @@
+# Trade, keyword, and scoring controls for the NJ Bid Intelligence Scraper.
+# Edit this file instead of editing Python when you want to tune priority trades.
+
+bid_words:
+  - bid
+  - bids
+  - bidder
+  - bidders
+  - notice to bidders
+  - sealed bids
+  - invitation to bid
+  - advertised bid
+  - request for bids
+  - request for proposal
+  - request for proposals
+  - rfp
+  - rfq
+  - quote
+  - quotation
+  - proposal
+  - proposals
+  - solicitation
+  - procurement
+  - purchasing
+  - contract
+  - contracts
+  - public works
+  - project manual
+  - specifications
+  - plans and specifications
+  - bid package
+  - bid documents
+  - contract documents
+  - addendum
+  - addenda
+  - prevailing wage
+  - bid bond
+  - performance bond
+  - payment bond
+  - consent of surety
+  - mandatory pre-bid
+  - pre-bid meeting
+  - site visit
+  - walkthrough
+  - walk-through
+
+open_words:
+  - open
+  - currently accepting
+  - accepting bids
+  - accepting proposals
+  - available
+  - active
+  - advertised
+  - posted
+  - now available
+  - bids will be received
+  - proposals will be received
+  - sealed bids will be received
+  - bid opening
+  - closing date
+  - due date
+
+negative_words:
+  - canceled
+  - cancelled
+  - closed
+  - expired
+  - archive
+  - archived
+  - awarded
+  - award notice
+  - bid results
+  - results
+  - rejected
+  - postponed indefinitely
+  - no longer accepting
+  - not accepting
+  - withdrawn
+  - intent to award
+  - awarded contracts
+  - past bids
+
+document_words:
+  - plan
+  - plans
+  - specifications
+  - specs
+  - project manual
+  - bid form
+  - proposal form
+  - contract documents
+  - drawings
+  - detail
+  - details
+  - download
+  - attachment
+  - attachments
+  - addendum
+  - addenda
+  - notice
+  - legal notice
+  - pdf
+  - pre-bid
+  - sign-in sheet
+
+contact_words:
+  - contact
+  - purchasing agent
+  - qualified purchasing agent
+  - qpa
+  - procurement
+  - bid recipient
+  - submit
+  - submission
+  - purchasing department
+  - engineer
+  - architect
+  - construction manager
+  - email
+  - phone
+
+# High-priority trades are the main target. These should get the largest scoring boost.
+high_priority_trades:
+  Masonry:
+    - masonry
+    - masonry restoration
+    - masonry repairs
+    - masonry repair
+    - brick restoration
+    - brick repair
+    - brick repairs
+    - brick replacement
+    - brick repointing
+    - block repair
+    - cmu repair
+    - stone restoration
+    - stone repair
+    - terra cotta
+    - terra cotta repair
+    - terra cotta restoration
+    - parapet repair
+    - parapet restoration
+    - parapet wall
+    - exterior wall repair
+    - exterior wall restoration
+    - lintel replacement
+    - lintel repair
+    - shelf angle
+    - mortar repair
+    - mortar joints
+    - masonry pointing
+    - chimney repair
+    - retaining wall repair
+
+  Waterproofing:
+    - waterproof
+    - waterproofing
+    - water proofing
+    - building waterproofing
+    - foundation waterproofing
+    - below grade waterproofing
+    - below-grade waterproofing
+    - dampproofing
+    - damp proofing
+    - water infiltration
+    - leak remediation
+    - leak repair
+    - sealants
+    - joint sealant
+    - joint sealants
+    - caulking
+    - expansion joint
+    - expansion joints
+    - plaza deck
+    - deck coating
+    - traffic coating
+    - elastomeric coating
+    - envelope waterproofing
+    - basement waterproofing
+
+  Tuck Pointing:
+    - tuck pointing
+    - tuckpointing
+    - tuck-pointing
+    - repointing
+    - re-pointing
+    - pointing
+    - mortar pointing
+    - mortar joint restoration
+    - mortar joints
+    - brick pointing
+    - masonry repointing
+    - masonry pointing
+    - joint repointing
+
+  Roof Restoration:
+    - roof restoration
+    - roof restorations
+    - roof coating
+    - roof coatings
+    - silicone roof restoration
+    - silicone roof coating
+    - silicone coating
+    - silicone membrane
+    - fluid applied roof
+    - fluid-applied roof
+    - liquid applied roof
+    - liquid-applied roof
+    - roof rehabilitation
+    - roof rehab
+    - roof repair
+    - roof repairs
+    - roof recover
+    - recover roof
+    - coating restoration
+    - membrane restoration
+    - cold applied membrane
+    - cold-applied membrane
+    - cold fluid applied membrane
+    - fluid applied membrane
+    - fluid-applied membrane
+    - liquid applied membrane
+    - liquid-applied membrane
+
+  Structural Reinforcement:
+    - structural reinforcement
+    - structural strengthening
+    - structural steel reinforcement
+    - steel reinforcement
+    - carbon fiber reinforcement
+    - frp reinforcement
+    - fiber reinforced polymer
+    - column reinforcement
+    - beam reinforcement
+    - slab reinforcement
+    - wall reinforcement
+    - foundation reinforcement
+    - structural concrete reinforcement
+    - strengthening system
+    - supplemental steel
+    - bracing
+    - shoring
+    - underpinning
+
+  Structural Alterations:
+    - structural alteration
+    - structural alterations
+    - structural modification
+    - structural modifications
+    - structural repairs
+    - structural repair
+    - load bearing
+    - bearing wall
+    - bearing walls
+    - wall opening
+    - new opening
+    - beam replacement
+    - column replacement
+    - lintel installation
+    - steel beam
+    - structural steel
+    - foundation alteration
+    - building alteration
+    - structural demolition
+    - structural remediation
+
+# Core trade matches still matter but are below specialized high-priority work.
+core_trades:
+  Interior Renovations:
+    - interior renovation
+    - interior renovations
+    - interior rehab
+    - interior rehabilitation
+    - interior construction
+    - building renovation
+    - office renovation
+    - classroom renovation
+    - corridor renovation
+    - lobby renovation
+    - restroom renovation
+    - tenant fit out
+    - tenant fit-out
+    - fit out
+    - fit-out
+    - renovation of interior
+    - renovate interior
+    - interior finishes
+
+  Interior Alterations:
+    - interior alteration
+    - interior alterations
+    - interior modifications
+    - partition
+    - partitions
+    - gypsum board
+    - drywall
+    - dropped ceiling
+    - drop ceiling
+    - suspended ceiling
+    - acoustical ceiling
+    - acoustic ceiling
+    - ceiling tile
+    - act ceiling
+    - interior fitout
+    - interior fit-out
+
+  Building/General Construction:
+    - building construction
+    - general construction
+    - building improvements
+    - facility improvements
+    - building addition
+    - building additions
+    - addition
+    - additions
+    - sitework
+    - site work
+    - concrete
+    - concrete repair
+    - concrete restoration
+    - concrete replacement
+    - concrete slab
+    - foundation
+    - foundations
+    - roofing
+    - roof replacement
+    - roof repair
+    - exterior improvements
+    - building envelope
+    - exterior envelope
+    - municipal building improvements
+    - school building improvements
+
+scoring:
+  target_county: 12
+  target_municipality: 8
+  source_quality_high: 6
+  source_quality_medium: 3
+  official_source: 6
+
+  high_priority_trade_base: 32
+  high_priority_trade_strength_cap: 14
+  core_trade_base: 16
+  core_trade_strength_cap: 8
+  no_trade_penalty: -18
+
+  open_status: 15
+  future_due_date: 18
+  due_soon_bonus: 8
+  due_soon_days: 21
+  missing_due_date_penalty: -18
+  expired_due_date_penalty: -45
+  closed_status_penalty: -55
+  negative_language_penalty: -18
+
+  contact_info: 8
+  document_links: 10
+  detail_url: 5
+  bid_number: 4
+  prebid_date: 5
+  addenda_found: 5
+  source_page_has_documents: 5
+
+  strong_bid_language: 10
+  moderate_bid_language: 5
+  weak_bid_language_penalty: -8
+
+  complete_info_bonus: 10
