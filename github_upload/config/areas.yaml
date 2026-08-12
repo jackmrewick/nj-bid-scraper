@@ -1,0 +1,68 @@
+# Optional coverage map.
+# This does not scrape by itself. It helps the dashboard show which municipalities
+# have sources configured and which ones still need a source URL added.
+#
+# Add more municipalities as your coverage expands.
+
+counties:
+  Bergen:
+    - Allendale
+    - Bergenfield
+    - Cliffside Park
+    - Englewood
+    - Fort Lee
+    - Hackensack
+    - Lyndhurst
+    - Paramus
+    - Ridgefield
+    - Ridgewood
+    - Teaneck
+  Essex:
+    - Bloomfield
+    - Cedar Grove
+    - East Orange
+    - Fairfield
+    - Livingston
+    - Millburn
+    - Montclair
+    - Newark
+    - Nutley
+    - Verona
+    - West Orange
+  Hudson:
+    - Bayonne
+    - Hoboken
+    - Jersey City
+    - Kearny
+    - North Bergen
+    - Secaucus
+    - Union City
+    - Weehawken
+  Passaic:
+    - Clifton
+    - Haledon
+    - Little Falls
+    - Passaic
+    - Paterson
+    - Wayne
+    - West Milford
+    - Woodland Park
+  Morris:
+    - Boonton
+    - Chatham
+    - Dover
+    - Denville
+    - Florham Park
+    - Madison
+    - Montville
+    - Morristown
+    - Parsippany-Troy Hills
+  Union:
+    - Elizabeth
+    - Linden
+    - Plainfield
+    - Rahway
+    - Scotch Plains
+    - Summit
+    - Union
+    - Westfield
